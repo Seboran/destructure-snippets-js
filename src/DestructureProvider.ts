@@ -38,7 +38,6 @@ export class DestructureProvider implements vscode.CodeActionProvider {
     const node = findNodeAtOffset(sourceFile, offset)
 
     if (!node) {
-      vscode.window.showInformationMessage('Invalid location for this snippet')
       return
     }
 
