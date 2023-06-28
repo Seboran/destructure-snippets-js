@@ -1,0 +1,10 @@
+{
+  "Destructure variable": {
+		"prefix": "destr",
+		"body": [
+			"const { $2 } = $1",
+			"$0"
+		],
+		"description": "Deconstruct a variable"
+	}
+}
