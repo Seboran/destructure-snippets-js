@@ -10,39 +10,16 @@
     "Snippets"
   ],
   "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "contributes": {
-    "commands": [
-      {
-        "command": "extension.destructureVariable",
-        "title": "Destructure Variable"
-      },
-      {
-        "command": "extension.destructureArgument",
-        "title": "Destructure Argument"
-      }
-    ],
     "keybindings": [
       {
         "command": "extension.destructureVariable",
-        "key": "ctrl+alt+d",
+        "key": "ctrl+alt+shift+v",
         "mac": "cmd+alt+shift+v",
         "when": "editorTextFocus"
-      },
-      {
-        "command": "extension.destructureArgument",
-        "key": "ctrl+alt+a",
-        "mac": "cmd+alt+shift+a",
-        "when": "editorTextFocus"
-      }
-    ],
-    "snippets": [
-      {
-        "language": "javascript",
-        "path": "./snippets/snippets.code-snippets"
-      },
-      {
-        "language": "typescript",
-        "path": "./snippets/snippets.code-snippets"
       }
     ]
   },

@@ -1,47 +1,83 @@
 import * as vscode from 'vscode'
 import * as ts from 'typescript'
 
-export function activate(context: vscode.ExtensionContext) {
-  context.subscriptions.push(
-    vscode.commands.registerCommand('extension.destructureVariable', () => {
-      insertSnippet()
-    })
-  )
+class DestructureProvider implements vscode.CodeActionProvider {
+  static readonly providedCodeActionKinds = [vscode.CodeActionKind.Refactor]
+
+  provideCodeActions(
+    document: vscode.TextDocument,
+    range: vscode.Range,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    context: vscode.CodeActionContext,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    token: vscode.CancellationToken
+  ): vscode.ProviderResult<vscode.CodeAction[]> {
+    const destructuringAction = this.createDestructuringAction(document, range)
+    return destructuringAction ? [destructuringAction] : []
+  }
+
+  private createDestructuringAction(document: vscode.TextDocument, range: vscode.Range): vscode.CodeAction | undefined {
+    const wordRange = document.getWordRangeAtPosition(range.start)
+    if (!wordRange) {
+      return
+    }
+
+    const word = document.getText(wordRange)
+    const action = new vscode.CodeAction(`Destructure '${word}'`, DestructureProvider.providedCodeActionKinds[0])
+
+    const sourceFile = ts.createSourceFile(
+      document.fileName,
+      document.getText(),
+      ts.ScriptTarget.Latest,
+      true
+    )
+
+    const offset = document.offsetAt(range.start)
+    const node = findNodeAtOffset(sourceFile, offset)
+
+    if (!node) {
+      vscode.window.showInformationMessage('Invalid location for this snippet')
+      return
+    }
+
+    let newText
+    if (isNodeInFunctionParameter(node)) {
+      newText = '{ $1 }'
+    } else {
+      newText = `const { $1 } = ${word}`
+    }
+
+    action.command = {
+      command: 'extension.destructureVariable',
+      title: 'Destructure variable',
+      arguments: [newText, wordRange]
+    }
+
+    action.isPreferred = true
+
+    return action
+  }
 }
 
-function insertSnippet() {
-  const editor = vscode.window.activeTextEditor
-  if (!editor) {
-    return // Aucun éditeur ouvert
-  }
-
-  const document = editor.document
-  const cursorPosition = editor.selection.active
-
-  const sourceFile = ts.createSourceFile(
-    document.fileName,
-    document.getText(),
-    ts.ScriptTarget.Latest,
-    true
+function activate(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    vscode.languages.registerCodeActionsProvider(
+      { pattern: '**/*.{js,ts}', scheme: 'file' },
+      new DestructureProvider(),
+      { providedCodeActionKinds: DestructureProvider.providedCodeActionKinds }
+    )
   )
 
-  const offset = document.offsetAt(cursorPosition)
-  const node = findNodeAtOffset(sourceFile, offset)
-  if (!node) {
-    vscode.window.showInformationMessage('Invalid location for this snippet')
+  context.subscriptions.push(vscode.commands.registerCommand('extension.destructureVariable', destructureVariable))
+}
+
+function destructureVariable(newText: string, wordRange: vscode.Range) {
+  const editor = vscode.window.activeTextEditor
+  if (!editor) {
     return
   }
-  if (
-    (!isNodeInFunctionParameter(node))
-  ) {
-    editor.insertSnippet(
-      new vscode.SnippetString('const { $2 } = ${1:$TM_SELECTED_TEXT}')
-    )
-  } else {
-    editor.insertSnippet(
-      new vscode.SnippetString('{ $1 }')
-    )
-  }
+
+  editor.insertSnippet(new vscode.SnippetString(newText), wordRange)
 }
 
 function findNodeAtOffset(node: ts.Node, offset: number): ts.Node | undefined {
@@ -60,3 +96,4 @@ function isNodeInFunctionParameter(node: ts.Node): boolean {
   return false
 }
 
+export { activate }
