@@ -4,7 +4,7 @@ import { DestructureProvider } from './DestructureProvider'
 function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.languages.registerCodeActionsProvider(
-      { pattern: '**/*.{js,ts}', scheme: 'file' },
+      { pattern: '**/*.{js,ts,vue,jsx,tsx}', scheme: 'file' },
       new DestructureProvider(),
       { providedCodeActionKinds: DestructureProvider.providedCodeActionKinds }
     )
