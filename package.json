@@ -3,6 +3,7 @@
   "displayName": "destructure-snippets-js",
   "description": "Easily destructure your variable with this simple snippet",
   "version": "0.0.1",
+  "repository": {"url": "https://github.com/Seboran/destructure-snippets-js"},
   "engines": {
     "vscode": "^1.79.0"
   },
