@@ -9,7 +9,32 @@
   "categories": [
     "Snippets"
   ],
+  "main": "./out/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "extension.destructureVariable",
+        "title": "Destructure Variable"
+      },
+      {
+        "command": "extension.destructureArgument",
+        "title": "Destructure Argument"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "extension.destructureVariable",
+        "key": "ctrl+alt+d",
+        "mac": "cmd+alt+shift+v",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "extension.destructureArgument",
+        "key": "ctrl+alt+a",
+        "mac": "cmd+alt+shift+a",
+        "when": "editorTextFocus"
+      }
+    ],
     "snippets": [
       {
         "language": "javascript",
@@ -20,5 +45,14 @@
         "path": "./snippets/snippets.code-snippets"
       }
     ]
+  },
+  "dependencies": {
+    "typescript": "^5.1.5",
+    "vscode": "^1.1.37"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "@typescript-eslint/parser": "^5.60.1",
+    "eslint": "^8.43.0"
   }
 }

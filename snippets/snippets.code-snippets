@@ -2,8 +2,15 @@
   "Destructure variable": {
 		"prefix": "destr",
 		"body": [
-			"const { $2 } = $1",
+			"const { $2 } = ${1:$TM_SELECTED_TEXT}",
 			"$0"
+		],
+		"description": "Deconstruct a variable"
+	},
+  "Destructure argument": {
+		"prefix": "destra",
+		"body": [
+			"{ $1 }"
 		],
 		"description": "Deconstruct a variable"
 	}
