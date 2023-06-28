@@ -4,15 +4,12 @@ import * as ts from 'typescript'
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand('extension.destructureVariable', () => {
-      insertSnippet('destr')
-    }),
-    vscode.commands.registerCommand('extension.destructureArgument', () => {
-      insertSnippet('destra')
+      insertSnippet()
     })
   )
 }
 
-function insertSnippet(snippetName: string) {
+function insertSnippet() {
   const editor = vscode.window.activeTextEditor
   if (!editor) {
     return // Aucun éditeur ouvert
@@ -51,22 +48,6 @@ function findNodeAtOffset(node: ts.Node, offset: number): ts.Node | undefined {
   if (offset >= node.getStart() && offset < node.getEnd()) {
     return ts.forEachChild(node, (c) => findNodeAtOffset(c, offset)) || node
   }
-}
-
-function isNodeInFunctionArgument(node: ts.Node): boolean {
-  while (node) {
-    if (
-      ts.isCallExpression(node) &&
-      node.arguments.some(
-        (arg) =>
-          arg.getStart() <= node.getStart() && arg.getEnd() > node.getEnd()
-      )
-    ) {
-      return true
-    }
-    node = node.parent
-  }
-  return false
 }
 
 function isNodeInFunctionParameter(node: ts.Node): boolean {

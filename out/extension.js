@@ -60,16 +60,6 @@ function findNodeAtOffset(node, offset) {
         return ts.forEachChild(node, (c) => findNodeAtOffset(c, offset)) || node;
     }
 }
-function isNodeInFunctionArgument(node) {
-    while (node) {
-        if (ts.isCallExpression(node) &&
-            node.arguments.some((arg) => arg.getStart() <= node.getStart() && arg.getEnd() > node.getEnd())) {
-            return true;
-        }
-        node = node.parent;
-    }
-    return false;
-}
 function isNodeInFunctionParameter(node) {
     while (node) {
         if (ts.isParameter(node)) {
