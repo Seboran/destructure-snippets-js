@@ -23,18 +23,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.activate = void 0;
-const vscode = __importStar(require("vscode"));
-const DestructureProvider_1 = require("./DestructureProvider");
-function activate(context) {
-    context.subscriptions.push(vscode.languages.registerCodeActionsProvider({ pattern: '**/*.{js,ts}', scheme: 'file' }, new DestructureProvider_1.DestructureProvider(), { providedCodeActionKinds: DestructureProvider_1.DestructureProvider.providedCodeActionKinds }));
-    context.subscriptions.push(vscode.commands.registerCommand('extension.destructureVariable', destructureVariable));
-}
-exports.activate = activate;
-function destructureVariable(newText, wordRange) {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-        return;
+exports.findNodeAtOffset = void 0;
+const ts = __importStar(require("typescript"));
+function findNodeAtOffset(node, offset) {
+    if (offset >= node.getStart() && offset < node.getEnd()) {
+        return ts.forEachChild(node, (c) => findNodeAtOffset(c, offset)) || node;
     }
-    editor.insertSnippet(new vscode.SnippetString(newText), wordRange);
 }
+exports.findNodeAtOffset = findNodeAtOffset;
