@@ -13,16 +13,6 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "contributes": {
-    "keybindings": [
-      {
-        "command": "extension.destructureVariable",
-        "key": "ctrl+alt+shift+v",
-        "mac": "cmd+alt+shift+v",
-        "when": "editorTextFocus"
-      }
-    ]
-  },
   "dependencies": {
     "typescript": "^5.1.5",
     "vscode": "^1.1.37"
