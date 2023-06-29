@@ -2,7 +2,7 @@
   "name": "destructure-snippets-js",
   "displayName": "destructure-snippets-js",
   "description": "Easily destructure your variable with this simple snippet",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "repository": {"url": "https://github.com/Seboran/destructure-snippets-js"},
   "publisher": "NirinaRabeson",
   "engines": {
