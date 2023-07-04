@@ -26,6 +26,8 @@ Array destructuring of hooks
 Doesn't work well on function calls
 ## Release Notes
 
+- 0.0.4 - destructuring of existing assignment
+
 - 0.0.3 - readme.md improvement
 
 - 0.0.2 - vue and jsx compatibility

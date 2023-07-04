@@ -2,6 +2,7 @@ import * as vscode from 'vscode'
 import * as ts from 'typescript'
 import { isNodeInFunctionParameter } from './isNodeInFunctionParameter'
 import { findNodeAtOffset } from './findNodeAtOffset'
+import { isNodeInAssignment } from './isNodeInAssignment'
 
 export class DestructureProvider implements vscode.CodeActionProvider {
   static readonly providedCodeActionKinds = [vscode.CodeActionKind.Refactor]
@@ -18,14 +19,20 @@ export class DestructureProvider implements vscode.CodeActionProvider {
     return destructuringAction ? [destructuringAction] : []
   }
 
-  private createDestructuringAction(document: vscode.TextDocument, range: vscode.Range): vscode.CodeAction | undefined {
+  private createDestructuringAction(
+    document: vscode.TextDocument,
+    range: vscode.Range
+  ): vscode.CodeAction | undefined {
     const wordRange = document.getWordRangeAtPosition(range.start)
     if (!wordRange) {
       return
     }
 
     const word = document.getText(wordRange)
-    const action = new vscode.CodeAction(`Destructure '${word}'`, DestructureProvider.providedCodeActionKinds[0])
+    const action = new vscode.CodeAction(
+      `Destructure '${word}'`,
+      DestructureProvider.providedCodeActionKinds[0]
+    )
 
     const sourceFile = ts.createSourceFile(
       document.fileName,
@@ -41,21 +48,29 @@ export class DestructureProvider implements vscode.CodeActionProvider {
       return
     }
 
-    let newText
-    if (isNodeInFunctionParameter(node)) {
-      newText = '{ $1 }'
-    } else {
-      newText = `const { $1 } = ${word}`
-    }
+    const regexReplacementText = this.getRegexReplacementText(node, word)
 
     action.command = {
       command: 'extension.destructureVariable',
       title: 'Destructure variable',
-      arguments: [newText, wordRange]
+      arguments: [regexReplacementText, wordRange],
     }
 
     action.isPreferred = true
 
     return action
+  }
+
+  public getRegexReplacementText(node: ts.Node, word: string) {
+    let newText
+    if (isNodeInFunctionParameter(node)) {
+      newText = '{ $1 }'
+    } // add condition is node is a variable assignment
+    else if (isNodeInAssignment(node)) {
+      newText = '{ $1 }'
+    } else {
+      newText = `const { $1 } = ${word}`
+    }
+    return newText
   }
 }
