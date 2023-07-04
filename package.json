@@ -3,7 +3,9 @@
   "displayName": "destructure-snippets-js",
   "description": "Easily destructure your variable with this simple snippet",
   "version": "0.0.3",
-  "repository": {"url": "https://github.com/Seboran/destructure-snippets-js"},
+  "repository": {
+    "url": "https://github.com/Seboran/destructure-snippets-js"
+  },
   "publisher": "NirinaRabeson",
   "engines": {
     "vscode": "^1.79.0"
@@ -19,9 +21,12 @@
     "typescript": "^5.1.5"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "@types/vscode": "^1.79.1",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
+    "@vscode/test-electron": "^2.3.3",
     "eslint": "^8.43.0",
-    "vscode": "^1.1.37"
+    "prettier-eslint": "^15.0.1"
   }
 }
