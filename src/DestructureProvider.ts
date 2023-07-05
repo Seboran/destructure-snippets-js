@@ -1,17 +1,13 @@
-import * as vscode from 'vscode'
 import * as ts from 'typescript'
-import { isNodeInFunctionParameter } from './isNodeInFunctionParameter'
+import * as vscode from 'vscode'
 import { findNodeAtOffset } from './findNodeAtOffset'
-import { isNodeInAssignment } from './isNodeInAssignment'
+import { getRegexReplacementText } from './getRegexReplacementText'
 
 // Suppose you have created a LanguageService instance named languageService
 export class DestructureProvider implements vscode.CodeActionProvider {
   static readonly providedCodeActionKinds = [vscode.CodeActionKind.Refactor]
-  static languageService: ts.LanguageService
 
-  static setLanguageService(languageService: ts.LanguageService) {
-    DestructureProvider.languageService = languageService
-  }
+  constructor(private languageService: ts.LanguageService) {}
 
   provideCodeActions(
     document: vscode.TextDocument,
@@ -34,38 +30,53 @@ export class DestructureProvider implements vscode.CodeActionProvider {
       return
     }
 
-    const word = document.getText(wordRange)
-    const action = new vscode.CodeAction(
-      `Destructure '${word}'`,
-      DestructureProvider.providedCodeActionKinds[0]
-    )
-
-    const documentPath = document.uri.path
-    try {
-      DestructureProvider.languageService
-        .getProgram()
-        ?.getSourceFile(documentPath)
-    } catch (e) {
-      console.log(e)
-      return
-    }
-    const sourceFile = DestructureProvider.languageService
-      .getProgram()
-      ?.getSourceFile(documentPath)
+    const sourceFile = this.getDocumentSourceFile(document)
 
     if (!sourceFile) {
       return
     }
 
-    const offset = document.offsetAt(range.start)
-    const node = findNodeAtOffset(sourceFile, offset)
+    const node = this.getNode(document, range, sourceFile)
 
     if (!node) {
       return
     }
 
-    const regexReplacementText = this.getRegexReplacementText(node, word)
+    const word = document.getText(wordRange)
 
+    const regexReplacementText = getRegexReplacementText(node, word)
+
+    return this.createAction(word, regexReplacementText, wordRange)
+  }
+
+  private getDocumentSourceFile(document: vscode.TextDocument) {
+    const documentPath = document.uri.path
+
+    const sourceFile = this.languageService
+      .getProgram()
+      ?.getSourceFile(documentPath)
+    return sourceFile
+  }
+
+  private getNode(
+    document: vscode.TextDocument,
+    range: vscode.Range,
+    sourceFile: ts.SourceFile
+  ) {
+    const offset = document.offsetAt(range.start)
+    const node = findNodeAtOffset(sourceFile, offset)
+    return node
+  }
+
+  private createAction(
+    word: string,
+    regexReplacementText: string,
+    wordRange: vscode.Range
+  ) {
+    const action = new vscode.CodeAction(
+      `Destructure '${word}'`,
+      DestructureProvider.providedCodeActionKinds[0]
+    )
     action.command = {
       command: 'extension.destructureVariable',
       title: 'Destructure variable',
@@ -75,18 +86,5 @@ export class DestructureProvider implements vscode.CodeActionProvider {
     action.isPreferred = true
 
     return action
-  }
-
-  public getRegexReplacementText(node: ts.Node, word: string) {
-    let newText
-    if (isNodeInFunctionParameter(node)) {
-      newText = '{ $1 }'
-    } // add condition is node is a variable assignment
-    else if (isNodeInAssignment(node)) {
-      newText = '{ $1 }'
-    } else {
-      newText = `const { $1 } = ${word}`
-    }
-    return newText
   }
 }

@@ -3,11 +3,10 @@ import { DestructureProvider } from './DestructureProvider'
 import { createLanguageService } from './languageService'
 
 async function activate(context: vscode.ExtensionContext) {
-  DestructureProvider.setLanguageService(await createLanguageService())
   context.subscriptions.push(
     vscode.languages.registerCodeActionsProvider(
       { pattern: '**/*.{js,ts,vue,jsx,tsx}', scheme: 'file' },
-      new DestructureProvider(),
+      new DestructureProvider(await createLanguageService()),
       { providedCodeActionKinds: DestructureProvider.providedCodeActionKinds }
     )
   )
