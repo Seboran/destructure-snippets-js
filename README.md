@@ -6,6 +6,8 @@ Destructure your variables and your arguments with this simple refactoring exten
 
 Use the refactor menu of vscode to find the destructuration option.
 
+By default is menu is accessible with the Cmd + shift + r shortcut on mac
+
 ![Destructure objects!](images/extractcomposable.gif)
 ![Destructure function arguments!](images/extractvariable.gif)
 
@@ -23,8 +25,9 @@ Array destructuring of hooks
 
 ## Known Issues
 
-Doesn't work well on function calls
 ## Release Notes
+
+- 0.0.5 - Improvements
 
 - 0.0.4 - destructuring of existing assignment
 
