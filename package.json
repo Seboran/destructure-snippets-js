@@ -1,8 +1,8 @@
 {
-  "name": "destructure-snippets-js",
-  "displayName": "destructure-snippets-js",
+  "name": "destructure-js",
+  "displayName": "Js Destructure Refactor",
   "description": "Easily destructure your variable with this simple snippet",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "repository": {
     "url": "https://github.com/Seboran/destructure-snippets-js"
   },

@@ -26,6 +26,7 @@ Array destructuring of hooks
 ## Known Issues
 
 ## Release Notes
+- 0.0.6 - Rename
 
 - 0.0.5 - Improvements
 
