@@ -4,8 +4,14 @@ import { isNodeInFunctionParameter } from './isNodeInFunctionParameter'
 import { findNodeAtOffset } from './findNodeAtOffset'
 import { isNodeInAssignment } from './isNodeInAssignment'
 
+// Suppose you have created a LanguageService instance named languageService
 export class DestructureProvider implements vscode.CodeActionProvider {
   static readonly providedCodeActionKinds = [vscode.CodeActionKind.Refactor]
+  static languageService: ts.LanguageService
+
+  static setLanguageService(languageService: ts.LanguageService) {
+    DestructureProvider.languageService = languageService
+  }
 
   provideCodeActions(
     document: vscode.TextDocument,
@@ -34,12 +40,22 @@ export class DestructureProvider implements vscode.CodeActionProvider {
       DestructureProvider.providedCodeActionKinds[0]
     )
 
-    const sourceFile = ts.createSourceFile(
-      document.fileName,
-      document.getText(),
-      ts.ScriptTarget.Latest,
-      true
-    )
+    const documentPath = document.uri.path
+    try {
+      DestructureProvider.languageService
+        .getProgram()
+        ?.getSourceFile(documentPath)
+    } catch (e) {
+      console.log(e)
+      return
+    }
+    const sourceFile = DestructureProvider.languageService
+      .getProgram()
+      ?.getSourceFile(documentPath)
+
+    if (!sourceFile) {
+      return
+    }
 
     const offset = document.offsetAt(range.start)
     const node = findNodeAtOffset(sourceFile, offset)

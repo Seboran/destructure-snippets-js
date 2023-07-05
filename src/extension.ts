@@ -1,7 +1,9 @@
 import * as vscode from 'vscode'
 import { DestructureProvider } from './DestructureProvider'
+import { createLanguageService } from './languageService'
 
-function activate(context: vscode.ExtensionContext) {
+async function activate(context: vscode.ExtensionContext) {
+  DestructureProvider.setLanguageService(await createLanguageService())
   context.subscriptions.push(
     vscode.languages.registerCodeActionsProvider(
       { pattern: '**/*.{js,ts,vue,jsx,tsx}', scheme: 'file' },
@@ -9,7 +11,13 @@ function activate(context: vscode.ExtensionContext) {
       { providedCodeActionKinds: DestructureProvider.providedCodeActionKinds }
     )
   )
-  context.subscriptions.push(vscode.commands.registerCommand('extension.destructureVariable', destructureVariable))
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'extension.destructureVariable',
+      destructureVariable
+    )
+  )
 }
 
 function destructureVariable(newText: string, wordRange: vscode.Range) {
