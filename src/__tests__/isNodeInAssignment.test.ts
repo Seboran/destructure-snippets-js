@@ -15,7 +15,7 @@ describe('isNodeInAssignment', () => {
     expect(result).toBe(true)
   })
   test('should return false if the node is not in an assignment', async () => {
-    const offsetAssignation = 47
+    const offsetAssignation = 70
     const node = getNodeAssignation(offsetAssignation, pathAssignationFile)
 
     if (!node) {

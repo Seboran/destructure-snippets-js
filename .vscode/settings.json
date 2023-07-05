@@ -1,6 +1,6 @@
 {
   "npm.packageManager": "pnpm",
   "editor.formatOnSave": true,
-  "vitest.commandLine": "npx vitest",
+  "vitest.commandLine": "",
   "testing.automaticallyOpenPeekView": "never"
 }
