@@ -44,7 +44,12 @@ export class DestructureProvider implements vscode.CodeActionProvider {
 
     const word = document.getText(wordRange)
 
-    const regexReplacementText = getRegexReplacementText(node, word)
+    const checker = this.languageService.getProgram()?.getTypeChecker()
+    if (!checker) {
+      return
+    }
+
+    const regexReplacementText = getRegexReplacementText(node, word, checker)
 
     return this.createAction(word, regexReplacementText, wordRange)
   }
