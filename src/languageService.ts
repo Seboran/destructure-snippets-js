@@ -5,8 +5,16 @@ import * as path from 'path'
 const scriptVersions: Record<string, number> = {}
 
 export async function createLanguageService() {
-  // Chemin vers votre fichier tsconfig.json
-  const workspaceFolder = vscode.workspace.workspaceFolders?.[0]
+  const activeTextEditor = vscode.window.activeTextEditor
+
+  if (!activeTextEditor) {
+    throw new Error('No active editor')
+  }
+  // get current workspace folder
+  const workspaceFolder = vscode.workspace.getWorkspaceFolder(
+    activeTextEditor.document.uri
+  )
+
   if (!workspaceFolder) {
     throw new Error('No workspace folder')
   }
