@@ -1,6 +1,7 @@
 import * as ts from 'typescript'
 import * as vscode from 'vscode'
 import * as path from 'path'
+import { getTsconfigFile } from './getTsconfigFile'
 
 const scriptVersions: Record<string, number> = {}
 
@@ -21,28 +22,9 @@ export async function createLanguageService() {
   const tsconfigPath = vscode.Uri.joinPath(workspaceFolder.uri, 'tsconfig.json')
 
   // Lisez votre fichier tsconfig.json
-  let tsconfigFile: ReturnType<typeof ts.parseConfigFileTextToJson>['config']
-  try {
-    const tsconfigFileBuffer = await vscode.workspace.fs.readFile(tsconfigPath)
-    tsconfigFile = ts.parseConfigFileTextToJson(
-      tsconfigPath.fsPath,
-      tsconfigFileBuffer.toString()
-    ).config
-  } catch (error) {
-    tsconfigFile = {
-      compilerOptions: {
-        target: 'es5',
-        module: 'commonjs',
-        allowJs: true,
-        checkJs: true,
-        strict: true,
-        noImplicitAny: true,
-        esModuleInterop: true,
-      },
-      include: ['src/**/*.ts', 'src/**/*.js'],
-      exclude: ['node_modules'],
-    }
-  }
+  const tsconfigFile: ReturnType<
+    typeof ts.parseConfigFileTextToJson
+  >['config'] = await getTsconfigFile(tsconfigPath)
 
   // Parsez votre fichier tsconfig.json pour obtenir les options de compilation et les noms de fichier
   const parsedCommandLine = ts.parseJsonConfigFileContent(
