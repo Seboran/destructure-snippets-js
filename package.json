@@ -1,5 +1,5 @@
 {
-  "name": "destructure-js",
+  "name": "destructure-snippets-js",
   "displayName": "Js Destructure Refactor",
   "description": "Easily destructure your variable with this simple snippet",
   "version": "0.0.6",
@@ -11,7 +11,7 @@
     "vscode": "^1.79.0"
   },
   "categories": [
-    "Snippets"
+    "Other"
   ],
   "main": "./out/extension.js",
   "activationEvents": [
